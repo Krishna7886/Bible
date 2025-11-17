@@ -1,0 +1,164 @@
+<!-- section1-sub1.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 1 - Hover to Speak</title>
+    <link rel="stylesheet" href="Matthew/style.css">
+</head>
+
+<body>
+    <h1>Matthew</h1>
+    <h2>Chapter 1</h2>
+    <p class="englishText" lang="en">1. This is the genealogy of Jesus the Messiah the son of David, the son of Abraham:
+    </p>
+    <p class="englishText" lang="en">2. Abraham was the father of Isaac, Isaac the father of Jacob, Jacob the father of
+        Judah and his brothers,</p>
+    <p class="englishText" lang="en">3. Judah the father of Perez and Zerah, whose mother was Tamar, Perez the father of
+        Hezron, Hezron the father of Ram,</p>
+    <p class="englishText" lang="en">4. Ram the father of Amminadab, Amminadab the father of Nahshon, Nahshon the father
+        of Salmon,</p>
+    <p class="englishText" lang="en">5. Salmon the father of Boaz, whose mother was Rahab, Boaz the father of Obed,
+        whose mother was Ruth, Obed the father of Jesse,</p>
+    <p class="englishText" lang="en">6. and Jesse the father of King David. David was the father of Solomon, whose
+        mother had been Uriah’s wife,</p>
+    <p class="englishText" lang="en">7. Solomon the father of Rehoboam, Rehoboam the father of Abijah, Abijah the father
+        of Asa, </p>
+    <p class="englishText" lang="en">8. Asa the father of Jehoshaphat, Jehoshaphat the father of Jehoram, Jehoram the
+        father of Uzziah,</p>
+    <p class="englishText" lang="en">9. Uzziah the father of Jotham, Jotham the father of Ahaz, Ahaz the father of
+        Hezekiah, </p>
+    <p class="englishText" lang="en">10. Hezekiah the father of Manasseh, Manasseh the father of Amon, Amon the father
+        of Josiah,</p>
+    <p class="englishText" lang="en">11. and Josiah the father of Jeconiah and his brothers at the time of the exile to
+        Babylon. </p>
+    <p class="englishText" lang="en">12. After the exile to Babylon: Jeconiah was the father of Shealtiel, Shealtiel the
+        father of Zerubbabel,</p>
+    <p class="englishText" lang="en">13. Zerubbabel the father of Abihud, Abihud the father of Eliakim, Eliakim the
+        father of Azor,</p>
+    <p class="englishText" lang="en">14. Azor the father of Zadok, Zadok the father of Akim, Akim the father of Elihud,
+    </p>
+    <p class="englishText" lang="en">15. Elihud the father of Eleazar, Eleazar the father of Matthan, Matthan the father
+        of Jacob,</p>
+    <p class="englishText" lang="en">16. and Jacob the father of Joseph, the husband of Mary, and Mary was the mother of
+        Jesus who is called the Messiah.</p>
+    <p class="englishText" lang="en">17. Thus there were fourteen generations in all from Abraham to David, fourteen
+        from David to the exile to Babylon, and fourteen from the exile to the Messiah.</p>
+    <p class="englishText" lang="en">18. This is how the birth of Jesus the Messiah came about : His mother Mary was
+        pledged to be married to Joseph, but before they came together, she was found to be pregnant through the Holy
+        Spirit.</p>
+    <p class="englishText" lang="en">19. Because Joseph her husband was faithful to the law, and yet did not want to
+        expose her to public disgrace, he had in mind to divorce her quietly.</p>
+    <p class="englishText" lang="en">20. But after he had considered this, an angel of the Lord appeared to him in a
+        dream and said, “Joseph son of David, do not be afraid to take Mary home as your wife, because what is conceived
+        in her is from the Holy Spirit.</p>
+    <p class="englishText" lang="en">21. She will give birth to a son, and you are to give him the name Jesus, because
+        he will save his people from their sins.”</p>
+    <p class="englishText" lang="en">22. All this took place to fulfill what the Lord had said through the prophet: </p>
+    <p class="englishText" lang="en">23. “The virgin will conceive and give birth to a son, and they will call him
+        Immanuel” (which means “God with us”).</p>
+    <p class="englishText" lang="en">24. When Joseph woke up, he did what the angel of the Lord had commanded him and
+        took Mary home as his wife.</p>
+    <p class="englishText" lang="en">25. But he did not consummate their marriage until she gave birth to a son. And he
+        gave him the name Jesus.</p>
+    <!-- Ensure your script is loaded after the content, or use defer -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Select all elements with the class 'englishText' and 'teluguText'
+            const englishTextElements = document.querySelectorAll('.englishText');
+            const teluguTextElements = document.querySelectorAll('.teluguText');
+
+            let voicesLoaded = false;
+            if ('speechSynthesis' in window) {
+                const synth = window.speechSynthesis;
+                let currentUtterance = null;
+                let voices = [];
+
+                const populateVoiceList = () => {
+                    voices = synth.getVoices();
+                    if (voices.length > 0) {
+                        voicesLoaded = true;
+                        console.log("Voices loaded successfully.");
+                    } else {
+                        console.warn("No voices found yet. Retrying...");
+                        setTimeout(populateVoiceList, 100);
+                    }
+                };
+
+                if (speechSynthesis.onvoiceschanged !== undefined) {
+                    speechSynthesis.onvoiceschanged = populateVoiceList;
+                }
+                populateVoiceList();
+
+                const speakText = (text, langCode) => {
+                    if (!voicesLoaded) {
+                        console.warn("Voices not loaded yet. Cannot speak.");
+                        return;
+                    }
+
+                    if (synth.speaking) {
+                        synth.cancel();
+                    }
+
+                    currentUtterance = new SpeechSynthesisUtterance(text);
+                    currentUtterance.lang = langCode;
+
+                    let targetVoice = null;
+                    targetVoice = voices.find(v => v.lang.toLowerCase() === langCode.toLowerCase());
+
+                    if (!targetVoice) {
+                        const primaryLang = langCode.substring(0, 2).toLowerCase();
+                        targetVoice = voices.find(v => v.lang.toLowerCase().startsWith(primaryLang));
+                    }
+                    if (!targetVoice && langCode.startsWith('en')) {
+                        targetVoice = voices.find(v => v.lang.toLowerCase().startsWith('en'));
+                    }
+
+                    if (targetVoice) {
+                        currentUtterance.voice = targetVoice;
+                        console.log(`Using voice: ${targetVoice.name} (${targetVoice.lang}) for language ${langCode}`);
+                    } else {
+                        console.warn(`No specific voice found for ${langCode}. Using default browser voice if available, which might not be correct.`);
+                    }
+
+                    synth.speak(currentUtterance);
+                };
+
+                const stopSpeech = () => {
+                    if (synth.speaking) {
+                        synth.cancel();
+                    }
+                };
+
+                // Attach event listeners to all English paragraphs
+                englishTextElements.forEach(element => {
+                    element.addEventListener('mouseenter', () => {
+                        const textContent = element.textContent.trim();
+                        speakText(textContent, 'en-US');
+                    });
+                    element.addEventListener('mouseleave', stopSpeech);
+                });
+
+                // Attach event listeners to all Telugu paragraphs
+                teluguTextElements.forEach(element => {
+                    element.addEventListener('mouseenter', () => {
+                        const textContent = element.textContent.trim();
+                        speakText(textContent, 'te-IN');
+                    });
+                    element.addEventListener('mouseleave', stopSpeech);
+                });
+
+            } else {
+                console.warn("Web Speech API is not supported in this browser.");
+                // Add title for all elements to indicate lack of support
+                document.querySelectorAll('p').forEach(element => {
+                    element.title = "Your browser does not support text-to-speech.";
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
